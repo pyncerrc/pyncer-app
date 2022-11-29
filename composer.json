@@ -1,0 +1,33 @@
+{
+    "name": "pyncer/app",
+    "type": "library",
+    "description": "Pyncer library for making web applications.",
+    "homepage": "https://pyncer.com/app",
+    "license": "Unlicense",
+    "require": {
+        "php": ">=8.1",
+        "psr/http-message": "^1.0.1",
+        "psr/log": "^3.0.0",
+        "pyncer/component": "*",
+        "pyncer/container": "*",
+        "pyncer/core": "*",
+        "pyncer/database": "*",
+        "pyncer/exception": "*",
+        "pyncer/http": "*",
+        "pyncer/iterable": "*",
+        "pyncer/log": "*",
+        "pyncer/routing": "*",
+        "pyncer/session": "*",
+        "pyncer/source": "*",
+        "pyncer/utility": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pyncer\\App\\": "src/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/pyncerrc/pyncer-app/issues",
+        "source": "https://github.com/pyncerrc/pyncer-app"
+    }
+}
