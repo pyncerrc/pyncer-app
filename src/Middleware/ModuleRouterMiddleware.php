@@ -116,9 +116,9 @@ class ModuleRouterMiddleware implements
             throw new UnexpectedValueException('Invalid source map.');
         }
 
-        $i18n = $handler->get(ID::I18N);
+        if ($this->getEnableI18n() && $handler->has(ID::I18N)) {
+            $i18n = $handler->get(ID::I18N);
 
-        if ($this->getEnableI18n() && $i18n !== null ) {
             $router = new I18nModuleRouter(
                 $sourceMap,
                 $request,
