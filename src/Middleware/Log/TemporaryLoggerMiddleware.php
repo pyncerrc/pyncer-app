@@ -1,13 +1,14 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Log;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
+use Pyncer\Log\TemporaryLogger;
 
-class CommitSessionMiddleware implements MiddlewareInterface
+class TemporaryLoggerMiddleware implements MiddlewareInterface
 {
     public function __invoke(
         PsrServerRequestInterface $request,
@@ -15,11 +16,13 @@ class CommitSessionMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        $session = $handler->get(ID::SESSION);
+        $logger = new TemporaryLogger();
 
-        if ($session->hasStarted()) {
-            $session->commit();
+        if ($handler->has(ID::LOGGER)) {
+            $logger->inherit($handler->get(ID::LOGGER));
         }
+
+        $handler->set(ID::LOGGER, $logger);
 
         return $handler->next($request, $response);
     }

@@ -8,26 +8,25 @@ use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\I18n\I18n;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Iterable\MapInterface;
 use Pyncer\Source\SourceMap;
 
 class I18nMiddleware implements MiddlewareInterface
 {
-    private string $sourceName
+    private string $sourceMapIdentifier
 
     public function __construct(
-        string $sourceName
+        string $sourceMapIdentifier
     ) {
-        $this->setSourceName($sourceName);
+        $this->setSourceMapIdentifier($sourceMapIdentifier);
     }
 
-    public function getSourceName(): string
+    public function getSourceMapIdentifier(): string
     {
-        return $this->sourceName;
+        return $this->sourceMapIdentifier;
     }
-    public function setSourceName(string $value): static
+    public function setSourceMapIdentifier(string $value): static
     {
-        $this->sourceName = $value;
+        $this->sourceMapIdentifier = $value;
         return $this;
     }
 
@@ -37,19 +36,12 @@ class I18nMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        $sources = $handler->get(ID:SOURCES);
-
-        if (!$sources) {
-            throw new UnexpectedValueException('Sources expected.');
-        } elseif (!($sources instanceof MapInterface)) {
-            throw new UnexpectedValueException('Invalid sources.');
+        if (!$handler->has($this->getSourceMapIdentifier())) {
+            throw new UnexpectedValueException('Source map expected.');
         }
 
-        $sourceMap = $sources->get($this->getSourceName());
-
-        if (!$sourceMap) {
-            throw new UnexpectedValueException('Source map expected.');
-        } elseif (!($sourceMap instanceof SourceMap)) {
+        $sourceMap = $handler->get($this->getSourceMapIdentifier());
+        if (!$sourceMap instanceof SourceMap) {
             throw new UnexpectedValueException('Invalid source map.');
         }
 

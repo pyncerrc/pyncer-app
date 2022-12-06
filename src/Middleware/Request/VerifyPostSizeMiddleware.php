@@ -1,5 +1,5 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Request;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
@@ -48,12 +48,12 @@ class VerifyPostSizeMiddleware  implements
         $postMaxSize = ini_get('post_max_size');
 
         switch (substr($postMaxSize, -1)) {
-            case 'M':
-            case 'm':
-                return intval($postMaxSize) * 1048576;
             case 'K':
             case 'k':
                 return intval($postMaxSize) * 1024;
+            case 'M':
+            case 'm':
+                return intval($postMaxSize) * 1048576;
             case 'G':
             case 'g':
                 return intval($postMaxSize) * 1073741824;

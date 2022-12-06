@@ -1,40 +1,42 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Redirect;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\Exception\InvalidArgumentException;
+use Pyncer\Http\Message\Status;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Http\Message\Status;
 
-use function count;
-use function explode;
-use function filter_var;
 use function in_array;
-use function strpos;
+use function explode;
+use function ksort;
+use function Pyncer\String\ltrim_string as pyncer_ltrim_string;
+use function rtrim;
 use function substr;
+use function str_starts_with;
+use function trim;
 
-class WwwMiddleware implements MiddlewareInterface
+class RedirectsMiddleware implements MiddlewareInterface
 {
-    private bool $includeWww;
+    private array $redirects;
     private ?Status $redirectStatus;
 
-    public function __construct(
-        bool $includeWww = false,
-        ?Status $redirectStatus = null
-    ) {
-        $this->setIncludedWww($includeWww);
+    public function __construct(array $redirects, ?Status $redirectStatus = null)
+    {
+        $this->setRedirects($redirects);
         $this->setRedirectStatus($redirectStatus);
     }
 
-    public function getIncludeWww(): bool
+    public function getRedirects(): array
     {
-        return $this->includeWww;
+        return $this->redirects;
     }
-    public function setIncludedWww(bool $value): static
+    public function setRedirects(array $value): static
     {
-        $this->includeWww = $value;
+        $this->redirects = $value;
+        // Ensure logest matches are first
+        krsort($this->redirects);
         return $this;
     }
 
@@ -54,7 +56,7 @@ class WwwMiddleware implements MiddlewareInterface
             true
         )) {
             throw new InvalidArgumentException(
-                'Invalid redirect status specified, expected null, 301, or 302.'
+                'Invalid redirect status specified, expected null, 301 or 302.'
             );
         }
 
@@ -70,17 +72,41 @@ class WwwMiddleware implements MiddlewareInterface
     {
         $uri = $request->getUri();
         $host = $uri->getHost();
-
-        if ($this->getIncludeWww()) {
-            if ($this->canAddWww($host)) {
-                $host = 'www' . $host;
-            }
-        } elseif (strpos($host, 'www.') === 0) {
-            $host = substr($host, 4);
+        $path = trim($uri->getPath(), '/');
+        if ($path !== '') {
+            $path = '/' . $path;
         }
 
-        if ($uri->getHost() !== $host) {
-            $uri = $uri->withHost($host);
+        $current = $host . $path;
+
+        foreach ($this->getRedirects() as $old => $new) {
+            $old = rtrim($old, '/');
+            $new = rtrim($new, '/');
+
+            if (substr($old, 0, 1) == '/') {
+                $old = $host . $old;
+            }
+
+            if (!str_starts_with($current, $old)) {
+                continue;
+            }
+
+            $new = explode('/', $new, 2);
+            if ($new[0] !== '') {
+                $uri = $uri->withHost($new[0]);
+            }
+
+            $path = '';
+            if (isset($new[1]) && $new[1] !== '') {
+                $path = '/' . $new[1];
+            }
+
+            $end = pyncer_ltrim_string($current, $old);
+            if ($end !== '') {
+                $path .= $end;
+            }
+
+            $uri = $uri->withPath($path);
 
             $status = $this->getRedirectStatus();
             if ($status !== null) {
@@ -96,31 +122,9 @@ class WwwMiddleware implements MiddlewareInterface
             }
 
             $request = $request->withUri($uri);
+            break;
         }
 
         return $handler->next($request, $response);
-    }
-
-    private function canAddWww($host): bool
-    {
-        if ($host === '' || filter_var($host, FILTER_VALIDATE_IP)) {
-            return false;
-        }
-
-        $host = explode('.', $host);
-
-        switch (count($host)) {
-            case 1: // localhost
-                return false;
-            case 2: // example.com
-                return true;
-            case 3: // example.co.uk
-                if ($host[1] === 'co') {
-                    return true;
-                }
-                break;
-        }
-
-        return false;
     }
 }

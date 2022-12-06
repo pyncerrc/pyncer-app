@@ -1,42 +1,41 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Redirect;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\Exception\InvalidArgumentException;
+use Pyncer\Http\Message\Status;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Http\Message\Status as SC;
 
 use function in_array;
-use function strval;
 
-class RedirectUriMiddleware implements MiddlewareInterface
+class RedirectHostMiddleware implements MiddlewareInterface
 {
-    private string $uri;
+    private string $host;
     private ?Status $redirectStatus;
 
-    public function __construct(string $uri, ?Status $redirectStatus = null)
+    public function __construct(string $host, ?Status $redirectStatus = null)
     {
-        $this->setUri($uri);
+        $this->setHost($host);
         $this->setRedirectStatus($redirectStatus);
     }
 
-    public function getUri(): string
+    public function getHost(): string
     {
-        return $this->uri;
+        return $this->host;
     }
-    public function setUri(string $value): static
+    public function setHost(string $value): static
     {
-        $this->uri = $value;
+        $this->host = $value;
         return $this;
     }
 
-    public function getRedirectStatus(): Status
+    public function getRedirectStatus(): ?Status
     {
         return $this->redirectStatus;
     }
-    public function setRedirectStatus(Status $value): static
+    public function setRedirectStatus(?Status $value): static
     {
         if (!in_array(
             $value,
@@ -48,7 +47,7 @@ class RedirectUriMiddleware implements MiddlewareInterface
             true
         )) {
             throw new InvalidArgumentException(
-                'Invalid redirect status code specified, expected null, 301 or 302.'
+                'Invalid redirect status specified, expected null, 301 or 302.'
             );
         }
 
@@ -64,12 +63,14 @@ class RedirectUriMiddleware implements MiddlewareInterface
     {
         $uri = $request->getUri();
 
-        if ($this->getUri() === '' || $this->getUri() === strval($uri)) {
+        if ($this->getHost() === '' || $this->getHost() === $uri->getHost()) {
             return $handler->next($request, $response);
         }
 
+        $uri = $uri->withHost($this->getHost());
+
         $status = $this->getRedirectStatus();
-        if (isset($status)) {
+        if ($status !== null) {
             if ($status === Status::REDIRECTION_301_MOVED_PERMANENTLY) {
                 $response = $response->withHeader(
                     'Cache-Control',
@@ -77,11 +78,11 @@ class RedirectUriMiddleware implements MiddlewareInterface
                 );
             }
 
-            return $response->withStatus($status->getStatusCode())
-                ->withHeader('Location', $this->getUri());
+            return $response->withStatus($status->value)
+                ->withHeader('Location', strval($uri));
         }
 
-        $request = $request->withUri($this->getUri());
+        $request = $request->withUri($uri);
 
         return $handler->next($request, $response);
     }

@@ -1,33 +1,37 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Redirect;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\Exception\InvalidArgumentException;
-use Pyncer\Http\Message\Status;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
+use Pyncer\Http\Message\Status as SC;
+use Stringable;
 
 use function in_array;
+use function strval;
 
-class RedirectHostMiddleware implements MiddlewareInterface
+class RedirectUriMiddleware implements MiddlewareInterface
 {
-    private string $host;
+    private string|Stringable $uri;
     private ?Status $redirectStatus;
 
-    public function __construct(string $host, ?Status $redirectStatus = null)
-    {
-        $this->setHost($host);
+    public function __construct(
+        string|Stringable $uri,
+        ?Status $redirectStatus = null
+    ) {
+        $this->setUri($uri);
         $this->setRedirectStatus($redirectStatus);
     }
 
-    public function getHost(): string
+    public function getUri(): string
     {
-        return $this->host;
+        return $this->uri;
     }
-    public function setHost(string $value): static
+    public function setUri(string|Stringable $value): static
     {
-        $this->host = $value;
+        $this->uri = $value;
         return $this;
     }
 
@@ -47,7 +51,7 @@ class RedirectHostMiddleware implements MiddlewareInterface
             true
         )) {
             throw new InvalidArgumentException(
-                'Invalid redirect status specified, expected null, 301 or 302.'
+                'Invalid redirect status code specified, expected null, 301 or 302.'
             );
         }
 
@@ -61,13 +65,12 @@ class RedirectHostMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        $uri = $request->getUri();
+        $fromUri = $request->getUri();
+        $toUri = strval($this->getUri());
 
-        if ($this->getHost() === '' || $this->getHost() === $uri->getHost()) {
+        if ($toUri === '' || $toUri === strval($uri)) {
             return $handler->next($request, $response);
         }
-
-        $uri = $uri->withHost($this->getHost());
 
         $status = $this->getRedirectStatus();
         if ($status !== null) {
@@ -78,11 +81,11 @@ class RedirectHostMiddleware implements MiddlewareInterface
                 );
             }
 
-            return $response->withStatus($status->value)
-                ->withHeader('Location', strval($uri));
+            return $response->withStatus($status->getStatusCode())
+                ->withHeader('Location', $toUri);
         }
 
-        $request = $request->withUri($uri);
+        $request = $request->withUri($this->getUri());
 
         return $handler->next($request, $response);
     }

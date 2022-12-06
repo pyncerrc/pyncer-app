@@ -1,14 +1,12 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Response;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
-use Pyncer\App\Identifier as ID;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Log\TemporaryLogger;
 
-class TemporaryLoggerMiddleware implements MiddlewareInterface
+class Utf8Middleware implements MiddlewareInterface
 {
     public function __invoke(
         PsrServerRequestInterface $request,
@@ -16,13 +14,10 @@ class TemporaryLoggerMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        $logger = new TemporaryLogger();
-
-        if ($handler->has(ID::LOGGER)) {
-            $logger->inherit($handler->get(ID::LOGGER));
-        }
-
-        $handler->set(ID::LOGGER, $logger);
+        $response = $response->withHeader(
+            'Content-Type',
+            'text/html; charset=utf-8'
+        );
 
         return $handler->next($request, $response);
     }

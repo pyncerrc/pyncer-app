@@ -1,5 +1,5 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Response;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
@@ -8,7 +8,7 @@ use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Message\DataResponseInterface;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Routing\ResponseInterface;
+use Pyncer\Routing\RouterResponseInterface;
 
 class JsonMiddleware implements MiddlewareInterface
 {
@@ -35,11 +35,12 @@ class JsonMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        $router = $handler->get(ID::ROUTER);
-
-        if (!$router) {
+        if (!$handler->has(ID::ROUTER)) {
             throw new UnexpectedValueException('Router expected.');
-        } elseif (!($router instanceof ResponseInterface)) {
+        }
+
+        $router = $handler->get(ID::ROUTER);
+        if (!$router instanceof RouterResponseInterface) {
             throw new UnexpectedValueException('Invalid router.');
         }
 

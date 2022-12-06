@@ -1,14 +1,15 @@
 <?php
-namespace Pyncer\App\Middleware;
+namespace Pyncer\App\Middleware\Routing;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Psr\Log\LoggerAwareInterface as PsrLoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait as PsrLoggerAwareTrait;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Iterable\MapInterface;
+use Pyncer\I18n\I18n;
 use Pyncer\Routing\PageRouter;
 use Pyncer\Routing\I18nPageRouter;
 use Pyncer\Routing\Path\AliasRoutingPath;
@@ -25,33 +26,33 @@ class PageRouterMiddleware implements
 {
     use PsrLoggerAwareTrait;
 
-    private string $sourceName;
+    private string $sourceMapIdentifier;
     private string $enableI18n;
     private string $basePath;
     private bool $enableRewriteRules;
     private string $allowedPathCharacters;
 
     public function __construct(
-        string $sourceName,
+        string $sourceMapIdentifier,
         bool $enableI18n = false,
         bool $enableRewriteRules = false,
         string $basePath = '',
         string $allowedPathCharacters = '-'
     ) {
-        $this->setSourceName($sourceName);
+        $this->setSourceMapIdentifier($sourceMapIdentifier);
         $this->setEnableI18n($enableI18n);
         $this->setEnableRewriteRules($enableRewriteRules);
         $this->setBasePath($basePath);
         $this->setAllowedPathCharacters($allowedPathCharacters);
     }
 
-    public function getSourceName(): string
+    public function getSourceMapIdentifier(): string
     {
-        return $this->sourceName;
+        return $this->sourceMapIdentifier;
     }
-    public function setSourceName(string $value): static
+    public function setSourceMapIdentifier(string $value): static
     {
-        $this->sourceName = $value;
+        $this->sourceMapIdentifier = $value;
         return $this;
     }
 
@@ -101,24 +102,21 @@ class PageRouterMiddleware implements
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        $sources = $handler->get(ID::SOURCES);
-
-        if (!$sources) {
-            throw new UnexpectedValueException('Sources expected.');
-        } elseif (!($sources instanceof MapInterface)) {
-            throw new UnexpectedValueException('Invalid sources.');
+        if (!$handler->has($this->getSourceMapIdentifier())) {
+            throw new UnexpectedValueException('Source map expected.');
         }
 
-        $sourceMap = $sources->get($this->getSourceName());
-
-        if (!$sourceMap) {
-            throw new UnexpectedValueException('Source map expected.');
-        } elseif (!($sourceMap instanceof SourceMap)) {
+        $sourceMap = $handler->get($this->getSourceMapIdentifier());
+        if (!$sourceMap instanceof SourceMap) {
             throw new UnexpectedValueException('Invalid source map.');
         }
 
         if ($this->getEnableI18n() && $handler->has(ID::I18N)) {
             $i18n = $handler->get(ID::I18N);
+
+            if (!$i18n instanceof I18n) {
+                throw new UnexpectedValueException('Invalid i18n.');
+            }
 
             $router = new I18nModuleRouter(
                 $sourceMap,
@@ -134,10 +132,13 @@ class PageRouterMiddleware implements
 
         if ($this->logger) {
             $router->setLogger($this->logger);
-        } else {
+        } elseif ($handler->has(ID::LOGGER)) {
             $logger = $handler->get(ID::LOGGER);
-            if ($logger) {
+
+            if ($logger instanceof PsrLoggerInterface) {
                 $router->setLogger($logger);
+            } else {
+                throw new UnexpectedValueException('Invalid logger.');
             }
         }
 
