@@ -3,6 +3,7 @@ namespace Pyncer\App;
 
 class Identifier
 {
+    const AUTH = 'auth';
     const DATABASE = 'database';
     const I18N = 'i18n';
     const LOGGER = 'logger';
@@ -17,6 +18,7 @@ class Identifier
     public static function isValid(string $value): bool
     {
         switch ($value) {
+            case static::AUTH:
             case static::DATABASE:
             case static::I18N:
             case static::LOGGER:

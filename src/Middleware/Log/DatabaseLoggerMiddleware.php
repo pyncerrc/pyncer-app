@@ -15,19 +15,19 @@ use Pyncer\Log\DatabaseLogger;
 
 class DatabaseLoggerMiddleware implements MiddlewareInterface
 {
-    private ?string $mapperAdaptorIdentifier;
+    private string $mapperAdaptorIdentifier;
 
     public function __construct(
-        ?string $mapperAdaptorIdentifier = null,
+        string $mapperAdaptorIdentifier,
     ) {
         $this->setMapperAdaptorIdentifier($mapperAdaptorIdentifier);
     }
 
-    public function getMapperAdaptorIdentifier(): ?string
+    public function getMapperAdaptorIdentifier(): string
     {
         return $this->mapperAdaptorIdentifier;
     }
-    public function setMapperAdaptorIdentifier(?string $value): static
+    public function setMapperAdaptorIdentifier(string $value): static
     {
         $this->mapperAdaptorIdentifier = $value;
         return $this;
