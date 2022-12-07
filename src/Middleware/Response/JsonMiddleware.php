@@ -8,7 +8,7 @@ use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Message\DataResponseInterface;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Routing\RouterResponseInterface;
+use Pyncer\Http\Server\RequestResponseInterface;
 
 class JsonMiddleware implements MiddlewareInterface
 {
@@ -40,7 +40,7 @@ class JsonMiddleware implements MiddlewareInterface
         }
 
         $router = $handler->get(ID::ROUTER);
-        if (!$router instanceof RouterResponseInterface) {
+        if (!$router instanceof RequestResponseInterface) {
             throw new UnexpectedValueException('Invalid router.');
         }
 
