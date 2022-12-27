@@ -28,20 +28,23 @@ class PageRouterMiddleware implements
 
     private string $sourceMapIdentifier;
     private string $enableI18n;
+    private bool $enableRewriting;
+    private bool $enableRedirects;
     private string $basePath;
-    private bool $enableRewriteRules;
     private string $allowedPathCharacters;
 
     public function __construct(
         string $sourceMapIdentifier,
         bool $enableI18n = false,
-        bool $enableRewriteRules = false,
+        bool $enableRewriting = false,
+        bool $enableRedirects = false,
         string $basePath = '',
         string $allowedPathCharacters = '-'
     ) {
         $this->setSourceMapIdentifier($sourceMapIdentifier);
         $this->setEnableI18n($enableI18n);
-        $this->setEnableRewriteRules($enableRewriteRules);
+        $this->setEnableRewriting($enableRewriting);
+        $this->setEnableRedirects($enableRedirects);
         $this->setBasePath($basePath);
         $this->setAllowedPathCharacters($allowedPathCharacters);
     }
@@ -66,13 +69,23 @@ class PageRouterMiddleware implements
         return $this;
     }
 
-    public function getEnableRewriteRules(): bool
+    public function getEnableRewriting(): bool
     {
-        return $this->enableRewriteRules;
+        return $this->enableRewriting;
     }
-    public function setEnableRewriteRules(bool $value): static
+    public function setEnableRewriting(bool $value): static
     {
-        $this->enableRewriteRules = $value;
+        $this->enableRewriting = $value;
+        return $this;
+    }
+
+    public function getEnableRedirects(): bool
+    {
+        return $this->enableRedirects;
+    }
+    public function setEnableRedirects(bool $value): static
+    {
+        $this->enableRedirects = $value;
         return $this;
     }
 
@@ -118,13 +131,13 @@ class PageRouterMiddleware implements
                 throw new UnexpectedValueException('Invalid i18n.');
             }
 
-            $router = new I18nModuleRouter(
+            $router = new I18nPageRouter(
                 $sourceMap,
                 $request,
                 $i18n
             );
         } else {
-            $router = new ModuleRouter(
+            $router = new PageRouter(
                 $sourceMap,
                 $request
             );
@@ -142,7 +155,9 @@ class PageRouterMiddleware implements
             }
         }
 
-        $router->setEnableRewriteRules($this->getEnableRewriteRules());
+        $router->setEnableRewriting($this->getEnableRewriting());
+
+        $router->setEnableRedirects($this->getEnableRedirects());
 
         $router->setBaseUrlPath($this->getBasePath());
 

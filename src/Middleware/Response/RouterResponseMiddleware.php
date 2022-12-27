@@ -5,12 +5,12 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Exception\UnexpectedValueException;
-use Pyncer\Http\Message\DataResponseInterface;
+use Pyncer\Http\Message\JsonResponseInterface;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
 use Pyncer\Http\Server\RequestResponseInterface;
 
-class JsonMiddleware implements MiddlewareInterface
+class RouterResponseMiddleware implements MiddlewareInterface
 {
     private bool $jsonp;
 
@@ -44,29 +44,29 @@ class JsonMiddleware implements MiddlewareInterface
             throw new UnexpectedValueException('Invalid router.');
         }
 
-        $dataResponse = $router->getResponse($handler);
+        $routerResponse = $router->getResponse($handler);
 
-        if ($dataResponse instanceof DataResponseInterface) {
+        if ($routerResponse instanceof JsonResponseInterface) {
             if ($this->getJsonp()) {
                 $callback = $request->getQueryParams()['callback'] ?? '';
             } else {
                 $callback = '';
             }
 
-            if ($dataResponse->getJsonpCallback() !== $callback) {
-                $dataResponse = $dataResponse->withJsonpCallback($callback);
+            if ($routerResponse->getCallback() !== $callback) {
+                $routerResponse = $routerResponse->withCallback($callback);
             }
         }
 
         // Normal response from here on
         $response = $response->withStatus(
-            $dataResponse->getStatusCode(),
-            $dataResponse->getReasonPhrase()
+            $routerResponse->getStatusCode(),
+            $routerResponse->getReasonPhrase()
         );
 
-        $response = $response->withBody($dataResponse->getBody());
+        $response = $response->withBody($routerResponse->getBody());
 
-        foreach ($dataResponse->getHeaders() as $key => $header) {
+        foreach ($routerResponse->getHeaders() as $key => $header) {
             $response = $response->withHeader($key, $header);
         }
 
