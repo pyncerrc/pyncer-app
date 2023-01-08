@@ -165,6 +165,7 @@ class ModuleRouterMiddleware implements
 
         $router->getRoutingPaths()->add(
             new IdRoutingPath(),
+            new UidRoutingPath(),
             new Base64IdRoutingPath(),
             new AliasRoutingPath(),
             new GlobRoutingPath()
