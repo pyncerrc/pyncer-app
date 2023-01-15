@@ -2,13 +2,11 @@
 namespace Pyncer\App\Middleware\Access;
 
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
-use Pyncer\App\Identifier as ID;
 use Pyncer\App\Middleware\Access\AbstractAuthenticatorMiddleware;
 use Pyncer\Access\AuthenticatorInterface;
 use Pyncer\Access\BearerAuthenticator;
 use Pyncer\Data\Mapper\MapperAdaptorInterface;
 use Pyncer\Exception\UnexpectedValueException;
-use Pyncer\Http\Message\Status;
 use Pyncer\Http\Server\RequestHandlerInterface;
 
 use function str_starts_with;
@@ -36,7 +34,7 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
         $this->setAccessPath($accessPath);
     }
 
-    public function getTokenMapperAdaptorIdentifier(): ?string
+    public function getTokenMapperAdaptorIdentifier(): string
     {
         return $this->tokenMapperAdaptorIdentifier;
     }

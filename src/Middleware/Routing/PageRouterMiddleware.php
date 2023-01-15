@@ -7,6 +7,7 @@ use Psr\Log\LoggerAwareInterface as PsrLoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait as PsrLoggerAwareTrait;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Pyncer\App\Identifier as ID;
+use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
 use Pyncer\I18n\I18n;
@@ -16,6 +17,7 @@ use Pyncer\Routing\Path\AliasRoutingPath;
 use Pyncer\Routing\Path\Base64IdRoutingPath;
 use Pyncer\Routing\Path\GlobRoutingPath;
 use Pyncer\Routing\Path\IdRoutingPath;
+use Pyncer\Routing\Path\UidRoutingPath;
 use Pyncer\Source\SourceMap;
 
 use function Pyncer\Http\clean_path;
@@ -27,7 +29,7 @@ class PageRouterMiddleware implements
     use PsrLoggerAwareTrait;
 
     private string $sourceMapIdentifier;
-    private string $enableI18n;
+    private bool $enableI18n;
     private bool $enableRewriting;
     private bool $enableRedirects;
     private string $basePath;

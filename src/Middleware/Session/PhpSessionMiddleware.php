@@ -31,7 +31,7 @@ class PhpSessionMiddleware implements MiddlewareInterface
     }
     public function setCookie(?Cookie $value): static
     {
-        $this->cookie = ($value !== '' ? $value : null);
+        $this->cookie = $value;
         return $this;
     }
 
@@ -87,7 +87,7 @@ class PhpSessionMiddleware implements MiddlewareInterface
 
         $session->commit();
 
-        $cookie->setValue($session->getId());
+        $cookie->setValue($session->getId() ?? '');
 
         $response = $response->withAddedHeader('Set-Cookie', $cookie);
 

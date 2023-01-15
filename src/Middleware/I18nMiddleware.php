@@ -26,7 +26,7 @@ class I18nMiddleware implements MiddlewareInterface
         $this->setSourceMapIdentifier($sourceMapIdentifier);
         $this->setLocaleCodes($localeCodes);
         $this->setDefaultLocaleCode($defaultLocaleCode);
-        $this->setFallbackLocaleCode($defaultLocaleCode);
+        $this->setFallbackLocaleCode($fallbackLocaleCode);
     }
 
     public function getSourceMapIdentifier(): string

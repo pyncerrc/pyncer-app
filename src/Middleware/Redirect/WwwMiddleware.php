@@ -101,7 +101,7 @@ class WwwMiddleware implements MiddlewareInterface
         return $handler->next($request, $response);
     }
 
-    private function canAddWww($host): bool
+    private function canAddWww(string $host): bool
     {
         if ($host === '' || filter_var($host, FILTER_VALIDATE_IP)) {
             return false;

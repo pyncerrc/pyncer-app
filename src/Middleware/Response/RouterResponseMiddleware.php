@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Message\JsonResponseInterface;
+use Pyncer\Http\Message\Status;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
 use Pyncer\Http\Server\RequestResponseInterface;
@@ -45,6 +46,17 @@ class RouterResponseMiddleware implements MiddlewareInterface
         }
 
         $routerResponse = $router->getResponse($handler);
+
+        if ($routerResponse === null) {
+            $status = Status::CLIENT_ERROR_404_NOT_FOUND;
+
+            $response = $response->withStatus(
+                $status->getStatusCode(),
+                $status->getReasonPhrase()
+            );
+
+            return $handler->next($request, $response);
+        }
 
         if ($routerResponse instanceof JsonResponseInterface) {
             if ($this->getJsonp()) {

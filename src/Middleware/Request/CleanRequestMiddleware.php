@@ -8,6 +8,7 @@ use Psr\Log\LoggerAwareTrait as PsrLoggerAwareTrait;
 use Pyncer\Exception\Exception;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
+use StdClass;
 
 use array_keys;
 use array_values;
@@ -24,7 +25,7 @@ class CleanRequestMiddleware implements MiddlewareInterface
     private bool $replaceBadUtf8Chars;
     private string $replaceString;
 
-    private const BAD_UTF8_CHARS = [
+    protected const BAD_UTF8_CHARS = [
         "\xcc\xb7"     => '', // COMBINING SHORT SOLIDUS OVERLAY      0337
         "\xcc\xb8"     => '', // COMBINING LONG SOLIDUS OVERLAY       0338
         "\xe1\x85\x9F" => '', // HANGUL CHOSEONG FILLER               115F
@@ -129,9 +130,15 @@ class CleanRequestMiddleware implements MiddlewareInterface
         if (in_array($request->getMethod(), ['PATCH', 'POST', 'PUT'])) {
             $parsedBody = $request->getParsedBody();
 
-            if (is_string($parsedBody) || is_iterable($parsedBody)) {
+            if (is_array($parsedBody)) {
                 $request = $request->withParsedBody(
                     $this->cleanData($parsedBody)
+                );
+            } elseif ($parsedBody instanceof StdClass) {
+                $parsedBody = $this->cleanData((array)$parsedBody);
+
+                $request = $request->withParsedBody(
+                    (object)$parsedBody
                 );
             }
         }
@@ -139,7 +146,7 @@ class CleanRequestMiddleware implements MiddlewareInterface
         return $handler->next($request, $response);
     }
 
-    private function cleanData(string|iterable $value)
+    private function cleanData(string|array $value): string|array
     {
         if ($this->getReplaceBadUtf8Chars()) {
             $value = $this->replaceBadChars(
@@ -155,10 +162,14 @@ class CleanRequestMiddleware implements MiddlewareInterface
         return $value;
     }
 
-    private function replaceBadChars(string|iterable $data, string $replace) {
-        if (is_iterable($data)) {
+    private function replaceBadChars(
+        string|array $data,
+        string $replace
+    ): string|array
+    {
+        if (is_array($data)) {
             foreach ($data as $key => $value) {
-                $data[$key] = $this->stripMaliciousChars($value, $replace);
+                $data[$key] = $this->replaceBadChars($value, $replace);
             }
 
             return $data;
@@ -171,30 +182,35 @@ class CleanRequestMiddleware implements MiddlewareInterface
             $char = $data[$i++];
             $byte = ord($char);
 
-            if ($byte < 0x80) $bytes = 0; // 1-bytes (00000000 to 01111111)
-            else if ($byte < 0xC0) { // 1-bytes (10000000 to 10111111)
+            if ($byte < 0x80) {
+                $bytes = 0; // 1-bytes (00000000 to 01111111)
+            } elseif ($byte < 0xC0) { // 1-bytes (10000000 to 10111111)
                 $result .= $replace;
                 continue;
-            }
-            else if ($byte < 0xE0) $bytes = 1; // 2-bytes (11000000 to 11011111)
-            else if ($byte < 0xF0) $bytes = 2; // 3-bytes (11100000 to 11101111)
-            else if ($byte < 0xF8) $bytes = 3; // 4-bytes (11110000 to 11110111)
-            else if ($byte < 0xFC) $bytes = 4; // 5-bytes (11111000 to 11111011)
-            else if ($byte < 0xFE) $bytes = 5; // 6-bytes (11111100 to 11111101)
-            else { // Invalid
+            } elseif ($byte < 0xE0) {
+                $bytes = 1; // 2-bytes (11000000 to 11011111)
+            } elseif ($byte < 0xF0) {
+                $bytes = 2; // 3-bytes (11100000 to 11101111)
+            } elseif ($byte < 0xF8) {
+                $bytes = 3; // 4-bytes (11110000 to 11110111)
+            } elseif ($byte < 0xFC) {
+                $bytes = 4; // 5-bytes (11111000 to 11111011)
+            } elseif ($byte < 0xFE) {
+                $bytes = 5; // 6-bytes (11111100 to 11111101)
+            } else { // Invalid
                 $result .= $replace;
                 continue;
             }
 
             // Ensure enough enough chars
-            if ($i + $bytes > $strlen) {
+            if ($i + $bytes > $len) {
                 $result .= $replace;
                 continue;
             }
 
             // Multi-byte character
             for ($j = 0; $j < $bytes; $j++) {
-                $byte = $str[$i + $j];
+                $byte = $data[$i + $j];
 
                 $char .= $byte;
                 $byte = ord($byte);
@@ -213,9 +229,9 @@ class CleanRequestMiddleware implements MiddlewareInterface
         return $result;
     }
 
-    private function stripMaliciousChars(string|iterable $data)
+    private function stripMaliciousChars(string|array $data): string|array
     {
-        if (is_iterable($data)) {
+        if (is_array($data)) {
             foreach ($data as $key => $value) {
                 $data[$key] = $this->stripMaliciousChars($value);
             }
@@ -225,6 +241,7 @@ class CleanRequestMiddleware implements MiddlewareInterface
 
         // Remove control characters
         $data = preg_replace('%[\x00-\x08\x0b-\x0c\x0e-\x1f]%', '', $data);
+        $data = strval($data);
 
         // Replace some 'bad' characters
         $data = str_replace(

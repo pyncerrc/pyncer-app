@@ -1,0 +1,10 @@
+parameters:
+    checkMissingIterableValueType: false
+    level: max
+    paths:
+        - src
+    ignoreErrors:
+        -
+            message: "#^Parameter \\#1 $cookies of method Psr\\\\Http\\\\Message\\\\ServerRequestInterface::withCookieParams() expects array, array|string given\\.$#"
+            count: 3
+            path: src/Middleware/Request/CleanRequestMiddleware.php

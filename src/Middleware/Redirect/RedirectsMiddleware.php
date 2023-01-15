@@ -22,8 +22,10 @@ class RedirectsMiddleware implements MiddlewareInterface
     private array $redirects;
     private ?Status $redirectStatus;
 
-    public function __construct(array $redirects, ?Status $redirectStatus = null)
-    {
+    public function __construct(
+        array $redirects,
+        ?Status $redirectStatus = null
+    ) {
         $this->setRedirects($redirects);
         $this->setRedirectStatus($redirectStatus);
     }

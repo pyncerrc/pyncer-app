@@ -52,7 +52,7 @@ class HttpsMiddleware implements MiddlewareInterface
             return $handler->next($request, $response);
         }
 
-        $update = false;
+        $upgrade = false;
 
         if ($this->getForceHttps()) {
             $upgrade = true;

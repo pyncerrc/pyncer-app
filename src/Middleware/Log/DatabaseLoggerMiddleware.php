@@ -3,6 +3,7 @@ namespace Pyncer\App\Middleware\Log;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Data\DataRewriterInterface;
 use Pyncer\Data\Mapper\MapperAdaptorInterface;
@@ -53,7 +54,14 @@ class DatabaseLoggerMiddleware implements MiddlewareInterface
         $logger = new DatabaseLogger($mapperAdaptor);
 
         if ($handler->has(ID::LOGGER)) {
-            $logger->inherit($handler->get(ID::LOGGER));
+            $existingLogger = $handler->get(ID::LOGGER);
+
+            if ($existingLogger instanceof PsrLoggerInterface) {
+                $logger->inherit($existingLogger);
+            } else {
+                throw new UnexpectedValueException('Invalid logger.');
+            }
+
         }
 
         $handler->set(ID::LOGGER, $logger);

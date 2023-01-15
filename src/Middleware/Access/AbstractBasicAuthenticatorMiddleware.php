@@ -3,6 +3,7 @@ namespace Pyncer\App\Middleware\Access;
 
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\App\Middleware\Access\AbstractAuthenticatorMiddleware;
+use Pyncer\Access\AuthenticatorInterface;
 use Pyncer\Access\BasicAuthenticator;
 use Pyncer\Data\Mapper\MapperAdaptorInterface;
 use Pyncer\Exception\UnexpectedValueException;

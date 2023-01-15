@@ -33,7 +33,7 @@ abstract class AbstractAuthenticatorMiddleware implements
         $this->setAllowGuests($allowGuests);
     }
 
-    public function getUserMapperAdaptorIdentifier(): ?string
+    public function getUserMapperAdaptorIdentifier(): string
     {
         return $this->userMapperAdaptorIdentifier;
     }
@@ -71,15 +71,17 @@ abstract class AbstractAuthenticatorMiddleware implements
     {
         $access = $this->forgeAuthenticator($request, $handler);
 
-        if ($this->logger) {
-            $access->setLogger($this->logger);
-        } elseif ($handler->has(ID::LOGGER)) {
-            $logger = $handler->get(ID::LOGGER);
+        if ($access instanceof PsrLoggerAwareInterface) {
+            if ($this->logger) {
+                $access->setLogger($this->logger);
+            } elseif ($handler->has(ID::LOGGER)) {
+                $logger = $handler->get(ID::LOGGER);
 
-            if ($logger instanceof PsrLoggerInterface) {
-                $access->setLogger($logger);
-            } else {
-                throw new UnexpectedValueException('Invalid logger.');
+                if ($logger instanceof PsrLoggerInterface) {
+                    $access->setLogger($logger);
+                } else {
+                    throw new UnexpectedValueException('Invalid logger.');
+                }
             }
         }
 

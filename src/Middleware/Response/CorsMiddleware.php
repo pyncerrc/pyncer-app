@@ -76,9 +76,9 @@ class CorsMiddleware implements MiddlewareInterface
     {
         return $this->allowCredentials;
     }
-    public function setAllowCredentials($value): static
+    public function setAllowCredentials(bool $value): static
     {
-        $this->allowCredentials = boolval($value);
+        $this->allowCredentials = $value;
         return $this;
     }
 
@@ -165,7 +165,7 @@ class CorsMiddleware implements MiddlewareInterface
                 if ($this->getMaxAge() !== null) {
                     $response = $response->withHeader(
                         'Access-Control-Max-Age',
-                        $this->getMaxAge()
+                        strval($this->getMaxAge())
                     );
                 }
             }
@@ -180,7 +180,7 @@ class CorsMiddleware implements MiddlewareInterface
             if ($this->getExposedHeaders() !== null) {
                 $response = $response->withHeader(
                     'Access-Control-Expose-Headers',
-                    implode(',', $this->getExposeHeaders())
+                    implode(',', $this->getExposedHeaders())
                 );
             }
         }
@@ -192,15 +192,19 @@ class CorsMiddleware implements MiddlewareInterface
         return $handler->next($request, $response);
     }
 
-    protected function isValidOrigin($origin): bool
+    protected function isValidOrigin(string $origin): bool
     {
         $origins = $this->getAllowedOrigins();
 
-        if ($origins === '*' || in_array('*', $origins, true)) {
+        if ($origins === '*') {
             return true;
         }
 
         if (is_array($origins)) {
+            if (in_array('*', $origins, true)) {
+                return true;
+            }
+
             return in_array($origin, $origins, true);
         }
 

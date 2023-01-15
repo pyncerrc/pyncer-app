@@ -26,7 +26,14 @@ class VerifyPostSizeMiddleware  implements
     ): PsrResponseInterface
     {
         $length = $request->getHeader('Content-Length');
-        if ($length && intval($length[0]) > $this->getPostMaxSize()) {
+
+        $postMaxSize = $this->getPostMaxSize();
+
+        if ($postMaxSize === null) {
+            return $handler->next($request, $response);
+        }
+
+        if ($length && intval($length[0]) > $postMaxSize) {
             if ($this->logger) {
                 // TODO: context like url or something
                 $this->logger->info('Max post size reached.');
@@ -43,9 +50,13 @@ class VerifyPostSizeMiddleware  implements
      *
      * @return int
      */
-    protected function getPostMaxSize(): int
+    protected function getPostMaxSize(): ?int
     {
         $postMaxSize = ini_get('post_max_size');
+
+        if ($postMaxSize === false) {
+            return null;
+        }
 
         switch (substr($postMaxSize, -1)) {
             case 'K':

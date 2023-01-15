@@ -6,7 +6,8 @@ use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\Exception\InvalidArgumentException;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Http\Message\Status as SC;
+use Pyncer\Http\Message\Factory\UriFactory;
+use Pyncer\Http\Message\Status;
 use Stringable;
 
 use function in_array;
@@ -68,7 +69,7 @@ class RedirectUriMiddleware implements MiddlewareInterface
         $fromUri = $request->getUri();
         $toUri = strval($this->getUri());
 
-        if ($toUri === '' || $toUri === strval($uri)) {
+        if ($toUri === '' || $toUri === strval($fromUri)) {
             return $handler->next($request, $response);
         }
 
@@ -85,7 +86,9 @@ class RedirectUriMiddleware implements MiddlewareInterface
                 ->withHeader('Location', $toUri);
         }
 
-        $request = $request->withUri($this->getUri());
+        $toUri = (new UriFactory())->createUri($toUri);
+
+        $request = $request->withUri($toUri);
 
         return $handler->next($request, $response);
     }

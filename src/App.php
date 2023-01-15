@@ -4,8 +4,10 @@ namespace Pyncer\App;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface as PsrMiddlewareInterface;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Container\Container;
+use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Message\Factory\ServerRequestFactory;
 use Pyncer\Http\Message\Factory\ResponseFactory;
 use Pyncer\Http\Message\FileStream;
@@ -47,14 +49,14 @@ class App extends Container implements RequestHandlerInterface
 
     public function count(): int
     {
-        return $this->get(ID::MIDDLEWARE)->count();
+        return $this->getMiddlewareManager()->count();
     }
 
     public function append(
         PsrMiddlewareInterface|MiddlewareInterface|callable ...$callable
     ): static
     {
-        $this->get(ID::MIDDLEWARE)->append(...$callable);
+        $this->getMiddlewareManager()->append(...$callable);
         return $this;
     }
 
@@ -62,7 +64,7 @@ class App extends Container implements RequestHandlerInterface
         PsrMiddlewareInterface|MiddlewareInterface|callable ...$callable
     ): static
     {
-        $this->get(ID::MIDDLEWARE)->prepend(...$callable);
+        $this->getMiddlewareManager()->prepend(...$callable);
         return $this;
     }
 
@@ -70,14 +72,14 @@ class App extends Container implements RequestHandlerInterface
         ?PsrResponseInterface $response = null
     ): PsrResponseInterface
     {
-        return $this->get(ID::MIDDLEWARE)->run($response);
+        return $this->getMiddlewareManager()->run($response);
     }
 
     public function handle(
         PsrServerRequestInterface $request
     ): PsrResponseInterface
     {
-        return $this->get(ID::MIDDLEWARE)->handle($request);
+        return $this->getMiddlewareManager()->handle($request);
     }
 
     public function next(
@@ -85,13 +87,13 @@ class App extends Container implements RequestHandlerInterface
         PsrResponseInterface $response
     ): PsrResponseInterface
     {
-        return $this->get(ID::MIDDLEWARE)->next($request, $response);
+        return $this->getMiddlewareManager()->next($request, $response);
     }
 
     public function set(string $id, mixed $value): static
     {
         if ($id === ID::LOGGER && $value instanceof PsrLoggerInterface) {
-            $this->get(ID::MIDDLEWARE)->setLogger(value);
+            $this->getMiddlewareManager()->setLogger($value);
         }
 
         return parent::set($id, $value);
@@ -121,5 +123,16 @@ class App extends Container implements RequestHandlerInterface
         } else {
             echo $body->getContents();
         }
+    }
+
+    private function getMiddlewareManager(): MiddlewareManager
+    {
+        $middlewareManager = $this->get(ID::MIDDLEWARE);
+
+        if ($middlewareManager instanceof MiddlewareManager) {
+            return $middlewareManager;
+        }
+
+        throw new UnexpectedValueException('Middleware manager not set.');
     }
 }

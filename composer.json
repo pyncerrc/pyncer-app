@@ -10,17 +10,20 @@
         "psr/log": "^3.0.0",
         "pyncer/access": "^1.0",
         "pyncer/component": "^1.0",
-        "pyncer/container": "^1.0",
-        "pyncer/core": "^1.0",
+        "pyncer/container": "^1.0.1",
+        "pyncer/core": "^1.0.1",
         "pyncer/database": "^1.0",
         "pyncer/exception": "^1.0",
-        "pyncer/http": "^1.0",
+        "pyncer/http": "^1.0.1",
         "pyncer/iterable": "^1.0",
         "pyncer/log": "^1.0",
         "pyncer/routing": "^1.1",
         "pyncer/session": "^1.0",
         "pyncer/source": "^1.0",
         "pyncer/utility": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.9"
     },
     "autoload": {
         "psr-4": {
@@ -30,5 +33,10 @@
     "support": {
         "issues": "https://github.com/pyncerrc/pyncer-app/issues",
         "source": "https://github.com/pyncerrc/pyncer-app"
+    },
+    "extra" : {
+        "branch-alias" : {
+            "dev-main" : "1.1-dev"
+        }
     }
 }
