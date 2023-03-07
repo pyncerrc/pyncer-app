@@ -5,6 +5,30 @@ parameters:
         - src
     ignoreErrors:
         -
-            message: "#^Parameter \\#1 $cookies of method Psr\\\\Http\\\\Message\\\\ServerRequestInterface::withCookieParams() expects array, array|string given\\.$#"
+            message: "#^Parameter \\#1 $cookies of method Psr\\\\Http\\\\Message\\\\ServerRequestInterface::withCookieParams\\(\\) expects array, array|string given\\.$#"
             count: 3
             path: src/Middleware/Request/CleanRequestMiddleware.php
+        -
+            message: "#^Call to an undefined static method Pyncer\\\\App\\\\Identifier::mapperAdaptor\\(\\)\\.$#"
+            count: 1
+            path: src/Middleware/Access/AbstractAuthenticatorMiddleware.php
+        -
+            message: "#^Call to an undefined static method Pyncer\\\\App\\\\Identifier::mapperAdaptor\\(\\)\\.$#"
+            count: 1
+            path: src/Middleware/Access/AbstractBearerAuthenticatorMiddleware.php
+        -
+            message: "#^Call to an undefined static method Pyncer\\\\App\\\\Identifier::mapperAdaptor\\(\\)\\.$#"
+            count: 1
+            path: src/Middleware/Log/DatabaseLoggerMiddleware.php
+        -
+            message: "#^Call to an undefined static method Pyncer\\\\App\\\\Identifier::mapperAdaptor\\(\\)\\.$#"
+            count: 1
+            path: src/Middleware/Snyppet/InstallMiddleware.php
+        -
+            message: "#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\\.$#"
+            count: 1
+            path: src/Middleware/Snyppet/SnyppetMiddleware.php
+        -
+            message: "#^Cannot call method getMiddlewares\\(\\) on mixed\\.$#"
+            count: 1
+            path: src/Middleware/Snyppet/SnyppetMiddleware.php

@@ -12,13 +12,15 @@
         "pyncer/component": "^1.0",
         "pyncer/container": "^1.0.1",
         "pyncer/core": "^1.0.1",
+        "pyncer/data": "^1.0.1",
         "pyncer/database": "^1.0",
         "pyncer/exception": "^1.0",
         "pyncer/http": "^1.0.1",
-        "pyncer/iterable": "^1.0",
+        "pyncer/iterable": "^1.1",
         "pyncer/log": "^1.0",
         "pyncer/routing": "^1.1",
         "pyncer/session": "^1.0",
+        "pyncer/snyppet": "^1.0.1",
         "pyncer/source": "^1.0",
         "pyncer/utility": "^1.0"
     },
@@ -36,7 +38,7 @@
     },
     "extra" : {
         "branch-alias" : {
-            "dev-main" : "1.1-dev"
+            "dev-main" : "1.2-dev"
         }
     }
 }

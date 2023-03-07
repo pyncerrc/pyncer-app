@@ -2,6 +2,7 @@
 namespace Pyncer\App\Middleware\Access;
 
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
+use Pyncer\App\Identifier as ID;
 use Pyncer\App\Middleware\Access\AbstractAuthenticatorMiddleware;
 use Pyncer\Access\AuthenticatorInterface;
 use Pyncer\Access\BearerAuthenticator;
@@ -18,9 +19,9 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
     private ?string $accessPath;
 
     public function __construct(
-        string $tokenMapperAdaptorIdentifier,
-        string $userMapperAdaptorIdentifier,
-        string $realm,
+        ?string $tokenMapperAdaptorIdentifier = null,
+        ?string $userMapperAdaptorIdentifier = null,
+        string $realm = 'app',
         bool $allowGuests = false,
         ?string $accessPath = null,
     ) {
@@ -30,7 +31,9 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
             $allowGuests
         );
 
-        $this->setTokenMapperAdaptorIdentifier($tokenMapperAdaptorIdentifier);
+        $this->setTokenMapperAdaptorIdentifier(
+            $tokenMapperAdaptorIdentifier ?? ID::mapperAdaptor('token')
+        );
         $this->setAccessPath($accessPath);
     }
 

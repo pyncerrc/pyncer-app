@@ -7,7 +7,6 @@ use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Data\DataRewriterInterface;
 use Pyncer\Data\Mapper\MapperAdaptorInterface;
-use Pyncer\Database\ConnectionInterface;
 use Pyncer\Exception\InvalidArgumentException;
 use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Server\MiddlewareInterface;
@@ -19,9 +18,11 @@ class DatabaseLoggerMiddleware implements MiddlewareInterface
     private string $mapperAdaptorIdentifier;
 
     public function __construct(
-        string $mapperAdaptorIdentifier,
+        ?string $mapperAdaptorIdentifier = null,
     ) {
-        $this->setMapperAdaptorIdentifier($mapperAdaptorIdentifier);
+        $this->setMapperAdaptorIdentifier(
+            $mapperAdaptorIdentifier ?? ID::mapperAdaptor('log')
+        );
     }
 
     public function getMapperAdaptorIdentifier(): string

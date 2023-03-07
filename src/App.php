@@ -14,6 +14,7 @@ use Pyncer\Http\Message\FileStream;
 use Pyncer\Http\Server\MiddlewareManager;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
+use Pyncer\Snyppet\SnyppetManager;
 
 use function header;
 use function implode;

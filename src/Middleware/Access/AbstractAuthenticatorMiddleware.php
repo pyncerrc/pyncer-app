@@ -24,11 +24,13 @@ abstract class AbstractAuthenticatorMiddleware implements
     private bool $allowGuests;
 
     public function __construct(
-        string $userMapperAdaptorIdentifier,
-        string $realm,
+        ?string $userMapperAdaptorIdentifier = null,
+        string $realm = 'app',
         bool $allowGuests = false,
     ) {
-        $this->setUserMapperAdaptorIdentifier($userMapperAdaptorIdentifier);
+        $this->setUserMapperAdaptorIdentifier(
+            $userMapperAdaptorIdentifier ?? ID::mapperAdaptor('user')
+        );
         $this->setRealm($realm);
         $this->setAllowGuests($allowGuests);
     }
