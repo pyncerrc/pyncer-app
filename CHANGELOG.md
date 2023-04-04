@@ -1,6 +1,12 @@
 # Change Log
 
-## 1.2.0 - 2023-05-07
+## 1.2.1 - 2023-04-04
+
+### Fixed
+
+- Fixed headers added in previous middlewares not getting sent with challenege response.
+
+## 1.2.0 - 2023-03-07
 
 ### Added
 
