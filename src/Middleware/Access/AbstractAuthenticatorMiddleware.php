@@ -88,17 +88,25 @@ abstract class AbstractAuthenticatorMiddleware implements
         }
 
         $accessResponse = $access->getResponse($handler);
-        if ($accessResponse !== null) {
-            return $accessResponse;
-        }
 
-        if (!$this->isAuthorized($request, $access)) {
-            return $access->getChallengeResponse(
+        if ($accessResponse === null &&
+            !$this->isAuthorized($request, $access)
+        ) {
+            $accessResponse = $access->getChallengeResponse(
                 Status::CLIENT_ERROR_401_UNAUTHORIZED,
                 [
                     'error_description' => 'The authorization token is missing.'
                 ]
             );
+        }
+
+        if ($accessResponse !== null) {
+            // Add any headers that were added to current response such as CORS
+            foreach ($response->getHeaders() as $key => $header) {
+                $accessResponse = $accessResponse->withHeader($key, $header);
+            }
+
+            return $accessResponse;
         }
 
         $handler->set(ID::ACCESS, $access);
