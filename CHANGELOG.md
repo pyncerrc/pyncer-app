@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.3.0 - 2023-04-013
+
+### Added
+
+- Added publicPaths parameter to BearerAuthenticationMiddleware.
+
 ## 1.2.1 - 2023-04-04
 
 ### Fixed

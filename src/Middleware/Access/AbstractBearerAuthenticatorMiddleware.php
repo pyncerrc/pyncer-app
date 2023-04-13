@@ -17,6 +17,7 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
 {
     private string $tokenMapperAdaptorIdentifier;
     private ?string $accessPath;
+    private array $publicPaths;
 
     public function __construct(
         ?string $tokenMapperAdaptorIdentifier = null,
@@ -24,6 +25,7 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
         string $realm = 'app',
         bool $allowGuests = false,
         ?string $accessPath = null,
+        array $publicPaths = [],
     ) {
         parent::__construct(
             $userMapperAdaptorIdentifier,
@@ -35,6 +37,7 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
             $tokenMapperAdaptorIdentifier ?? ID::mapperAdaptor('token')
         );
         $this->setAccessPath($accessPath);
+        $this->setPublicPaths($publicPaths);
     }
 
     public function getTokenMapperAdaptorIdentifier(): string
@@ -58,6 +61,20 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
         }
 
         $this->accessPath = $value;
+        return $this;
+    }
+
+    protected function getPublicPaths(): array
+    {
+        return $this->publicPaths;
+    }
+    protected function setPublicPaths(array $value): static
+    {
+        foreach ($value as $key => $path) {
+            $value[$key] = '/' . trim($path, '/');
+        }
+
+        $this->publicPaths = $value;
         return $this;
     }
 
@@ -114,15 +131,24 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
             return true;
         }
 
-        if ($this->getAccessPath() === null) {
-            return false;
+        $uri = $request->getUri();
+
+        // Access path
+        if ($this->getAccessPath() !== null) {
+            if ($uri->getPath() === $this->getAccessPath() ||
+                str_starts_with($uri->getPath(), $this->getAccessPath() . '/')
+            ) {
+                return true;
+            }
         }
 
-        $uri = $request->getUri();
-        if ($uri->getPath() === $this->getAccessPath() ||
-            str_starts_with($uri->getPath(), $this->getAccessPath() . '/')
-        ) {
-            return true;
+        // Public paths
+        foreach ($this->getPublicPaths() as $path) {
+            if ($uri->getPath() === $path ||
+                str_starts_with($uri->getPath(), $path . '/')
+            ) {
+                return true;
+            }
         }
 
         return false;
