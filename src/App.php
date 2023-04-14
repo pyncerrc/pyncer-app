@@ -91,6 +91,24 @@ class App extends Container implements RequestHandlerInterface
         return $this->getMiddlewareManager()->next($request, $response);
     }
 
+    public function onBefore(callable $callable): static
+    {
+        $this->getMiddlewareManager()->onBefore($callable);
+        return $this;
+    }
+
+    public function onAfter(callable $callable): static
+    {
+        $this->getMiddlewareManager()->onBefore($callable);
+        return $this;
+    }
+
+    public function onError(callable $callable): static
+    {
+        $this->getMiddlewareManager()->onBefore($callable);
+        return $this;
+    }
+
     public function set(string $id, mixed $value): static
     {
         if ($id === ID::LOGGER && $value instanceof PsrLoggerInterface) {

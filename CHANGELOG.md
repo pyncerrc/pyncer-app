@@ -1,10 +1,11 @@
 # Change Log
 
-## 1.3.0 - 2023-04-013
+## 1.3.0 - 2023-04-014
 
 ### Added
 
 - Added publicPaths parameter to BearerAuthenticationMiddleware.
+- Exposed MiddlewareManager onError, onBefore, onAfter to App
 
 ## 1.2.1 - 2023-04-04
 
