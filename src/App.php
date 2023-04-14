@@ -99,13 +99,13 @@ class App extends Container implements RequestHandlerInterface
 
     public function onAfter(callable $callable): static
     {
-        $this->getMiddlewareManager()->onBefore($callable);
+        $this->getMiddlewareManager()->onAfter($callable);
         return $this;
     }
 
     public function onError(callable $callable): static
     {
-        $this->getMiddlewareManager()->onBefore($callable);
+        $this->getMiddlewareManager()->onError($callable);
         return $this;
     }
 
