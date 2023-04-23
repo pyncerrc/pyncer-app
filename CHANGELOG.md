@@ -1,6 +1,12 @@
 # Change Log
 
-## 1.3.0 - 2023-04-014
+## 1.4.0 - 2023-04-22
+
+### Added
+
+- Added error response option to debug middleware.
+
+## 1.3.0 - 2023-04-14
 
 ### Added
 
