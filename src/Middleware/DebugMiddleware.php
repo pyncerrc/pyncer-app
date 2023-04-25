@@ -3,6 +3,9 @@ namespace Pyncer\App\Middleware;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
+use Pyncer\Http\Message\Factory\StreamFactory;
+use Pyncer\Http\Message\Response;
+use Pyncer\Http\Message\Status;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
 

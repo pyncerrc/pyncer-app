@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.4.1 - 2023-04-24
+
+### Fixed
+
+- Added missing use dependencies.
+
 ## 1.4.0 - 2023-04-22
 
 ### Added
