@@ -237,7 +237,11 @@ class CleanRequestMiddleware implements MiddlewareInterface
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
-                $data[$key] = $this->stripMaliciousChars($value);
+                if (is_string($value) || is_array($value)) {
+                    $data[$key] = $this->stripMaliciousChars($value);
+                } else {
+                    $data[$key] = $value;
+                }
             }
 
             return $data;
