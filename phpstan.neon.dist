@@ -5,10 +5,6 @@ parameters:
         - src
     ignoreErrors:
         -
-            message: "#^Parameter \\#1 $cookies of method Psr\\\\Http\\\\Message\\\\ServerRequestInterface::withCookieParams\\(\\) expects array, array|string given\\.$#"
-            count: 3
-            path: src/Middleware/Request/CleanRequestMiddleware.php
-        -
             message: "#^Call to an undefined static method Pyncer\\\\App\\\\Identifier::mapperAdaptor\\(\\)\\.$#"
             count: 1
             path: src/Middleware/Access/AbstractAuthenticatorMiddleware.php
@@ -32,3 +28,7 @@ parameters:
             message: "#^Cannot call method getMiddlewares\\(\\) on mixed\\.$#"
             count: 1
             path: src/Middleware/Snyppet/SnyppetMiddleware.php
+        -
+            message: "#^Method Pyncer\\\\App\\\\Middleware\\\\Request\\\\CleanRequestMiddleware::cleanData\\(\\) should return array but returns array|string\\.$#"
+            count: 1
+            path: src/Middleware/Request/CleanRequestMiddleware.php

@@ -3,10 +3,12 @@ namespace Pyncer\App\Middleware;
 
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
+use Pyncer\App\Identifier as ID;
 use Pyncer\Http\Message\Factory\StreamFactory;
 use Pyncer\Http\Message\Response;
 use Pyncer\Http\Message\Status;
 use Pyncer\Http\Server\MiddlewareInterface;
+use Pyncer\Http\Server\MiddlewareManager;
 use Pyncer\Http\Server\RequestHandlerInterface;
 
 use function error_reporting;
@@ -59,19 +61,23 @@ class DebugMiddleware implements MiddlewareInterface
             ini_set('display_startup_errors', 1);
 
             if ($this->getErrorResponse()) {
-                $handler->onError(function(
-                    $request,
-                    $response,
-                    $handler,
-                    $class,
-                    $error
-                ) {
-                    return new Response(
-                        Status::SERVER_ERROR_500_INTERNAL_SERVER_ERROR,
-                        [],
-                        (new StreamFactory())->createStream($class . "\n\n" . strval($error->getException()))
-                    );
-                });
+                $middlewareManager = $handler->get(ID::MIDDLEWARE);
+
+                if ($middlewareManager instanceof MiddlewareManager) {
+                    $middlewareManager->onError(function(
+                        $request,
+                        $response,
+                        $handler,
+                        $class,
+                        $error
+                    ) {
+                        return new Response(
+                            Status::SERVER_ERROR_500_INTERNAL_SERVER_ERROR,
+                            [],
+                            (new StreamFactory())->createStream($class . "\n\n" . strval($error->getException()))
+                        );
+                    });
+                }
             }
         } else {
             // We still want errors to be reported to the log file

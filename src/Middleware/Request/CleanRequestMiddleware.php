@@ -146,7 +146,7 @@ class CleanRequestMiddleware implements MiddlewareInterface
         return $handler->next($request, $response);
     }
 
-    private function cleanData(string|array $value): string|array
+    private function cleanData(array $value): array
     {
         if ($this->getReplaceBadUtf8Chars()) {
             $value = $this->replaceBadChars(
@@ -169,7 +169,11 @@ class CleanRequestMiddleware implements MiddlewareInterface
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
-                $data[$key] = $this->replaceBadChars($value, $replace);
+                if (is_string($value) || is_array($value)) {
+                    $data[$key] = $this->replaceBadChars($value, $replace);
+                } else {
+                    $data[$key] = $value;
+                }
             }
 
             return $data;

@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.3.2 - 2023-04-29
+
+### Fixed
+
+- Fixed issue with CleanRequestMiddleware.
+- Addressed some issues brought up by PHPStan.
+
 ## 1.3.1 - 2023-04-24
 
 ### Added
