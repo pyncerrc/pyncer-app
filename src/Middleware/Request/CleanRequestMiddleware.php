@@ -21,11 +21,11 @@ use strlen;
 
 class CleanRequestMiddleware implements MiddlewareInterface
 {
-    private bool $stripMaliciousUtf8Chars;
-    private bool $replaceBadUtf8Chars;
+    private bool $stripMaliciousUtf8Characters;
+    private bool $replaceBadUtf8Characters;
     private string $replaceString;
 
-    protected const BAD_UTF8_CHARS = [
+    protected const BAD_UTF8_CHARACTERS = [
         "\xcc\xb7"     => '', // COMBINING SHORT SOLIDUS OVERLAY      0337
         "\xcc\xb8"     => '', // COMBINING LONG SOLIDUS OVERLAY       0338
         "\xe1\x85\x9F" => '', // HANGUL CHOSEONG FILLER               115F
@@ -66,32 +66,32 @@ class CleanRequestMiddleware implements MiddlewareInterface
     ];
 
     public function __construct(
-        bool $stripMaliciousUtf8Chars = false,
-        bool $replaceBadUtf8Chars = false,
+        bool $stripMaliciousUtf8Characters = false,
+        bool $replaceBadUtf8Characters = false,
         string $replaceString = ''
     ) {
-        $this->setStripMaliciousUtf8Chars($stripMaliciousUtf8Chars);
-        $this->setReplaceBadUtf8Chars($replaceBadUtf8Chars);
+        $this->setStripMaliciousUtf8Characters($stripMaliciousUtf8Characters);
+        $this->setReplaceBadUtf8Characters($replaceBadUtf8Characters);
         $this->setReplaceString($replaceString);
     }
 
-    public function getStripMaliciousUtf8Chars(): bool
+    public function getStripMaliciousUtf8Characters(): bool
     {
-        return $this->stripMaliciousUtf8Chars;
+        return $this->stripMaliciousUtf8Characters;
     }
-    public function setStripMaliciousUtf8Chars(bool $value): static
+    public function setStripMaliciousUtf8Characters(bool $value): static
     {
-        $this->stripMaliciousUtf8Chars = $value;
+        $this->stripMaliciousUtf8Characters = $value;
         return $this;
     }
 
-    public function getReplaceBadUtf8Chars(): bool
+    public function getReplaceBadUtf8Characters(): bool
     {
-        return $this->replaceBadUtf8Chars;
+        return $this->replaceBadUtf8Characters;
     }
-    public function setReplaceBadUtf8Chars(bool $value): static
+    public function setReplaceBadUtf8Characters(bool $value): static
     {
-        $this->replaceBadUtf8Chars = $value;
+        $this->replaceBadUtf8Characters = $value;
         return $this;
     }
 
@@ -111,8 +111,8 @@ class CleanRequestMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        if (!$this->getReplaceBadUtf8Chars() &&
-            !$this->getStripMaliciousUtf8Chars()
+        if (!$this->getReplaceBadUtf8Characters() &&
+            !$this->getStripMaliciousUtf8Characters()
         ) {
             return $handler->next($request, $response);
         }
@@ -148,21 +148,21 @@ class CleanRequestMiddleware implements MiddlewareInterface
 
     private function cleanData(array $value): array
     {
-        if ($this->getReplaceBadUtf8Chars()) {
-            $value = $this->replaceBadChars(
+        if ($this->getReplaceBadUtf8Characters()) {
+            $value = $this->replaceBadCharacters(
                 $value,
                 $this->getReplaceString()
             );
         }
 
-        if ($this->getStripMaliciousUtf8Chars()) {
-            $value = $this->stripMaliciousChars($value);
+        if ($this->getStripMaliciousUtf8Characters()) {
+            $value = $this->stripMaliciousCharacters($value);
         }
 
         return $value;
     }
 
-    private function replaceBadChars(
+    private function replaceBadCharacters(
         string|array $data,
         string $replace
     ): string|array
@@ -170,7 +170,7 @@ class CleanRequestMiddleware implements MiddlewareInterface
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 if (is_string($value) || is_array($value)) {
-                    $data[$key] = $this->replaceBadChars($value, $replace);
+                    $data[$key] = $this->replaceBadCharacters($value, $replace);
                 } else {
                     $data[$key] = $value;
                 }
@@ -206,7 +206,7 @@ class CleanRequestMiddleware implements MiddlewareInterface
                 continue;
             }
 
-            // Ensure enough enough chars
+            // Ensure enough enough characters
             if ($i + $bytes > $len) {
                 $result .= $replace;
                 continue;
@@ -233,12 +233,12 @@ class CleanRequestMiddleware implements MiddlewareInterface
         return $result;
     }
 
-    private function stripMaliciousChars(string|array $data): string|array
+    private function stripMaliciousCharacters(string|array $data): string|array
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 if (is_string($value) || is_array($value)) {
-                    $data[$key] = $this->stripMaliciousChars($value);
+                    $data[$key] = $this->stripMaliciousCharacters($value);
                 } else {
                     $data[$key] = $value;
                 }
@@ -253,8 +253,8 @@ class CleanRequestMiddleware implements MiddlewareInterface
 
         // Replace some 'bad' characters
         $data = str_replace(
-            array_keys(static::BAD_UTF8_CHARS),
-            array_values(static::BAD_UTF8_CHARS),
+            array_keys(static::BAD_UTF8_CHARACTERS),
+            array_values(static::BAD_UTF8_CHARACTERS),
             $data
         );
 
