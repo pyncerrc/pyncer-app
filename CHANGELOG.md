@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.3.3 - 2023-05-23
+
+### Changed
+
+- Normalized 'Chars' to 'Characters' to match the rest of pyncer.
+
 ## 1.3.2 - 2023-04-29
 
 ### Fixed
