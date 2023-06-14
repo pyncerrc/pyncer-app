@@ -13,7 +13,7 @@ abstract class AbstractBasicAuthenticatorMiddleware extends AbstractAuthenticato
 {
     protected function forgeAuthenticator(
         PsrServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): AuthenticatorInterface
     {
         if (!$handler->has($this->getUserMapperAdaptorIdentifier())) {
@@ -37,6 +37,6 @@ abstract class AbstractBasicAuthenticatorMiddleware extends AbstractAuthenticato
 
     abstract protected function forgeBasicAuthenicator(
         MapperAdaptorInterface $userMapperAdaptor,
-        PsrServerRequestInterface $request
+        PsrServerRequestInterface $request,
     ): AuthenticatorInterface;
 }

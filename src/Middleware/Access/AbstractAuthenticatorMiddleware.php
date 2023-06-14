@@ -22,17 +22,20 @@ abstract class AbstractAuthenticatorMiddleware implements
     private string $userMapperAdaptorIdentifier;
     private string $realm;
     private bool $allowGuests;
+    private ?int $guestUserId;
 
     public function __construct(
         ?string $userMapperAdaptorIdentifier = null,
         string $realm = 'app',
         bool $allowGuests = false,
+        ?int $guestUserId = null,
     ) {
         $this->setUserMapperAdaptorIdentifier(
             $userMapperAdaptorIdentifier ?? ID::mapperAdaptor('user')
         );
         $this->setRealm($realm);
         $this->setAllowGuests($allowGuests);
+        $this->setGuestUserId($guestUserId);
     }
 
     public function getUserMapperAdaptorIdentifier(): string
@@ -62,6 +65,16 @@ abstract class AbstractAuthenticatorMiddleware implements
     protected function setAllowGuests(bool $value): static
     {
         $this->allowGuests = $value;
+        return $this;
+    }
+
+    protected function getGuestUserId(): ?int
+    {
+        return $this->guestUserId;
+    }
+    protected function setGuestUserId(?int $value): static
+    {
+        $this->guestUserId = $value;
         return $this;
     }
 

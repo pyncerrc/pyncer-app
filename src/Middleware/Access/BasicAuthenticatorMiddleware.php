@@ -11,13 +11,14 @@ class BasicAuthenticatorMiddleware extends AbstractBasicAuthenticatorMiddleware
 {
     protected function forgeBasicAuthenicator(
         MapperAdaptorInterface $userMapperAdaptor,
-        PsrServerRequestInterface $request
+        PsrServerRequestInterface $request,
     ): AuthenticatorInterface
     {
         return new BasicAuthenticator(
-            $userMapperAdaptor,
-            $request,
-            $this->getRealm()
+            userMapperAdaptor: $userMapperAdaptor,
+            request: $request,
+            realm: $this->getRealm(),
+            guestUserId: $this->getGuestUserId(),
         );
     }
 }

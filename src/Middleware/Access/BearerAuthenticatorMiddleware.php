@@ -12,14 +12,15 @@ class BearerAuthenticatorMiddleware extends AbstractBearerAuthenticatorMiddlewar
     protected function forgeBearerAuthenicator(
         MapperAdaptorInterface $tokenMapperAdaptor,
         MapperAdaptorInterface $userMapperAdaptor,
-        PsrServerRequestInterface $request
+        PsrServerRequestInterface $request,
     ): AuthenticatorInterface
     {
         return new BearerAuthenticator(
-            $tokenMapperAdaptor,
-            $userMapperAdaptor,
-            $request,
-            $this->getRealm()
+            tokenMapperAdaptor: $tokenMapperAdaptor,
+            userMapperAdaptor: $userMapperAdaptor,
+            request: $request,
+            realm: $this->getRealm(),
+            guestUserId: $this->getGuestUserId(),
         );
     }
 }

@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.3.4 - 2023-06-14
+
+### Added
+
+- Added support for access middlewares to specify a guest user id.
+
 ## 1.3.3 - 2023-05-23
 
 ### Changed

@@ -24,13 +24,15 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
         ?string $userMapperAdaptorIdentifier = null,
         string $realm = 'app',
         bool $allowGuests = false,
+        ?int $guestUserId = null,
         ?string $accessPath = null,
         array $publicPaths = [],
     ) {
         parent::__construct(
             $userMapperAdaptorIdentifier,
             $realm,
-            $allowGuests
+            $allowGuests,
+            $guestUserId,
         );
 
         $this->setTokenMapperAdaptorIdentifier(
@@ -119,7 +121,7 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
     abstract protected function forgeBearerAuthenicator(
         MapperAdaptorInterface $tokenMapperAdaptor,
         MapperAdaptorInterface $userMapperAdaptor,
-        PsrServerRequestInterface $request
+        PsrServerRequestInterface $request,
     ): AuthenticatorInterface;
 
     public function isAuthorized(
