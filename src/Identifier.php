@@ -63,10 +63,6 @@ class Identifier
     {
         $value = pyncer_to_snake_case($name);
 
-        if (!static::isValid($value)) {
-            throw new LogicException('Identifier not found. (' . $name . ')');
-        }
-
         if ($arguments) {
             $arguments = array_map('strval', $arguments);
             $arguments = implode('__', $arguments);

@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.3.5 - 2023-06-04
+
+### Changed
+
+- Identifier __callStatic will no longer throw an error if the identifier is not registered.
+
 ## 1.3.4 - 2023-06-14
 
 ### Added
