@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.3.6 - 2023-10-20
+
+### Changed
+
+- Source map validation in middlewares now checks against the interface instead of the class.
+
 ## 1.3.5 - 2023-07-04
 
 ### Changed
