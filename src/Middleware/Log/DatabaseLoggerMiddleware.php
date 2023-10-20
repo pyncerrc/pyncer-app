@@ -45,7 +45,7 @@ class DatabaseLoggerMiddleware implements MiddlewareInterface
             throw new UnexpectedValueException('Mapper adaptor expected.');
         }
 
-        $mapperAdaptor = $handler->get($this->mapperAdaptorIdentifier);
+        $mapperAdaptor = $handler->get($this->getMapperAdaptorIdentifier());
         if (!$mapperAdaptor instanceof MapperAdaptorInterface) {
             throw new UnexpectedValueException(
                 'Invalid mapper adaptor.'

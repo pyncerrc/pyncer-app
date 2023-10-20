@@ -8,7 +8,7 @@ use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\I18n\I18n;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Source\SourceMap;
+use Pyncer\Source\SourceMapInterface;
 
 class I18nMiddleware implements MiddlewareInterface
 {
@@ -80,7 +80,7 @@ class I18nMiddleware implements MiddlewareInterface
         }
 
         $sourceMap = $handler->get($this->getSourceMapIdentifier());
-        if (!$sourceMap instanceof SourceMap) {
+        if (!$sourceMap instanceof SourceMapInterface) {
             throw new UnexpectedValueException('Invalid source map.');
         }
 

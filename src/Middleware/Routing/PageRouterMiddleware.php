@@ -18,7 +18,7 @@ use Pyncer\Routing\Path\Base64IdRoutingPath;
 use Pyncer\Routing\Path\GlobRoutingPath;
 use Pyncer\Routing\Path\IdRoutingPath;
 use Pyncer\Routing\Path\UidRoutingPath;
-use Pyncer\Source\SourceMap;
+use Pyncer\Source\SourceMapInterface;
 
 use function Pyncer\Http\clean_path;
 
@@ -122,7 +122,7 @@ class PageRouterMiddleware implements
         }
 
         $sourceMap = $handler->get($this->getSourceMapIdentifier());
-        if (!$sourceMap instanceof SourceMap) {
+        if (!$sourceMap instanceof SourceMapInterface) {
             throw new UnexpectedValueException('Invalid source map.');
         }
 
