@@ -32,7 +32,7 @@ class ModuleRouterMiddleware implements
     private bool $enableI18n;
     private bool $enableRewriting;
     private bool $enableRedirects;
-    private string $basePath;
+    private string $baseUrlPath;
     private string $allowedPathCharacters;
 
     public function __construct(
@@ -40,14 +40,14 @@ class ModuleRouterMiddleware implements
         bool $enableI18n = false,
         bool $enableRewriting = false,
         bool $enableRedirects = false,
-        string $basePath = '',
+        string $baseUrlPath = '',
         string $allowedPathCharacters = '-'
     ) {
         $this->setSourceMapIdentifier($sourceMapIdentifier);
         $this->setEnableI18n($enableI18n);
         $this->setEnableRewriting($enableRewriting);
         $this->setEnableRedirects($enableRedirects);
-        $this->setBasePath($basePath);
+        $this->setBaseUrlPath($baseUrlPath);
         $this->setAllowedPathCharacters($allowedPathCharacters);
     }
 
@@ -91,13 +91,13 @@ class ModuleRouterMiddleware implements
         return $this;
     }
 
-    public function getBasePath(): string
+    public function getBaseUrlPath(): string
     {
-        return $this->basePath;
+        return $this->baseUrlPath;
     }
-    public function setBasePath(string $value): static
+    public function setBaseUrlPath(string $value): static
     {
-        $this->basePath = clean_path($value);
+        $this->baseUrlPath = clean_path($value);
         return $this;
     }
 
@@ -161,7 +161,7 @@ class ModuleRouterMiddleware implements
 
         $router->setEnableRedirects($this->getEnableRedirects());
 
-        $router->setBaseUrlPath($this->getBasePath());
+        $router->setBaseUrlPath($this->getBaseUrlPath());
 
         $router->setAllowedPathCharacters($this->getAllowedPathCharacters());
 

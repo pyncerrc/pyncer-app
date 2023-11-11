@@ -10,6 +10,7 @@ class Identifier
     public const ACCESS = 'access';
     public const DATABASE = 'database';
     public const I18N = 'i18n';
+    public const IMAGE = 'image';
     public const INSTALL = 'install';
     public const LOGGER = 'logger';
     public const MAPPER_ADAPTOR = 'mapper_adaptor';
@@ -30,14 +31,14 @@ class Identifier
             throw new LogicException('Invalid identifier name. (' . $identifier . ')');
         }
 
-        if (!array_key_exists($identifier, static::$identifiers)) {
-            static::$identifiers[$identifier] = [];
+        if (!in_array($identifier, static::$identifiers)) {
+            static::$identifiers[] = $identifier;
         }
     }
 
     public static function isValid(string $value): bool
     {
-        if (array_key_exists($value, static::$identifiers)) {
+        if (in_array($value, static::$identifiers)) {
             return true;
         }
 
@@ -45,6 +46,7 @@ class Identifier
             case static::ACCESS:
             case static::DATABASE:
             case static::I18N:
+            case static::IMAGE:
             case static::INSTALL:
             case static::LOGGER:
             case static::MAPPER_ADAPTOR:

@@ -33,7 +33,9 @@ class DatabaseMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): PsrResponseInterface
     {
-        $handler->set(ID::DATABASE, $this->driver->getConnection());
+        $handler->set(ID::DATABASE, function() {
+            return $this->driver->getConnection();
+        });
 
         return $handler->next($request, $response);
     }

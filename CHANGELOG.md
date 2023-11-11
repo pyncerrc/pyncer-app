@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.4.0 - Unreleased
+
+### Added
+
+- Added Image middleware.
+
+### Changed
+
+- Database middleware now lazy loads connection.
+- Page and Module middleware basePath param renamed to baseUrlPath.
+
 ## 1.3.6 - 2023-10-20
 
 ### Changed
@@ -67,9 +78,9 @@
 
 ### Added
 
-- HSTS response middleware.
-- Slash redirect middleware.
-- UID routing path to router middlewares.
+- Added HSTS response middleware.
+- Added Slash redirect middleware.
+- Added UID routing path to router middlewares.
 - PHPStan static analysis.
 
 ## 1.0.0 - 2022-11-29
