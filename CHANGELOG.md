@@ -5,6 +5,7 @@
 ### Added
 
 - Added Image middleware.
+- Added ability to specify request method in publicPaths param of AbstractBearerAuthenticatorMiddleware.
 
 ### Changed
 
