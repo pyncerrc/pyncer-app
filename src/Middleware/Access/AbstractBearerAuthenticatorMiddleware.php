@@ -73,7 +73,13 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
     protected function setPublicPaths(array $value): static
     {
         foreach ($value as $key => $path) {
-            $value[$key] = '/' . trim($path, '/');
+            if (str_starts_with($path, '@')) {
+                $path = explode('/', $path, 2);
+                $path[1] = '/' . trim($path[1] ?? '', '/');
+                $value[$key] = implode('/', $path);
+            } else {
+                $value[$key] = '/' . trim($path, '/');
+            }
         }
 
         $this->publicPaths = $value;
@@ -145,7 +151,26 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
         }
 
         // Public paths
-        foreach ($this->getPublicPaths() as $path) {
+        foreach ($this->getPublicPaths() as $value) {
+            $method = null;
+            $path = $value;
+
+            if (str_starts_with($path, '@')) {
+                $path = explode('/', $path, 2);
+                $method = strtoupper(substr($path[0], 1));
+                $path = $path[1] ?? '';
+            }
+
+            if ($method !== null && $method !== $request->getMethod()) {
+                continue;
+            }
+
+            if ($path === '') {
+                throw new UnexpectedValueException(
+                    'Public path is invalid. (' . $value . ')'
+                );
+            }
+
             if ($uri->getPath() === $path ||
                 str_starts_with($uri->getPath(), $path . '/')
             ) {
