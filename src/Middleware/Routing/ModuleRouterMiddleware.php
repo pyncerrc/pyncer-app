@@ -20,7 +20,7 @@ use Pyncer\Routing\Path\IdRoutingPath;
 use Pyncer\Routing\Path\UidRoutingPath;
 use Pyncer\Source\SourceMapInterface;
 
-use function Pyncer\Http\clean_path;
+use function Pyncer\Http\clean_path as pyncer_http_clean_path;
 
 class ModuleRouterMiddleware implements
     MiddlewareInterface,
@@ -97,7 +97,7 @@ class ModuleRouterMiddleware implements
     }
     public function setBaseUrlPath(string $value): static
     {
-        $this->baseUrlPath = clean_path($value);
+        $this->baseUrlPath = pyncer_http_clean_path($value);
         return $this;
     }
 

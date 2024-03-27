@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.4.0 - Unreleased
+## 1.4.0 - 2024-03-27
 
 ### Added
 
@@ -11,6 +11,7 @@
 
 - Database middleware now lazy loads connection.
 - Page and Module middleware basePath param renamed to baseUrlPath.
+- AbstractAuthenticatorMiddleware now checks hasAuthenticated() instead of isUser().
 
 ## 1.3.6 - 2023-10-20
 
