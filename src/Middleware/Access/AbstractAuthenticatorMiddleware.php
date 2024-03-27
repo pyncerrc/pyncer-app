@@ -137,7 +137,7 @@ abstract class AbstractAuthenticatorMiddleware implements
         AuthenticatorInterface $access
     ): bool
     {
-        if ($access->isUser() || $this->getAllowGuests()) {
+        if ($access->hasAuthenticated() || $this->getAllowGuests()) {
             return true;
         }
 
