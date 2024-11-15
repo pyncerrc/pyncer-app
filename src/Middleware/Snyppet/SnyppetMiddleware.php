@@ -82,7 +82,7 @@ class SnyppetMiddleware implements MiddlewareInterface
             }
         }
 
-        array_reverse($middlewares);
+        $middlewares = array_reverse($middlewares);
 
         foreach ($middlewares as $key => $value) {
             $handler->prepend($value);
