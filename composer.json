@@ -18,7 +18,7 @@
         "pyncer/http": "^1.1",
         "pyncer/iterable": "^1.1",
         "pyncer/image": "^1.1",
-        "pyncer/log": "^1.0",
+        "pyncer/log": "^1.1.0",
         "pyncer/routing": "^1.1",
         "pyncer/session": "^1.0",
         "pyncer/snyppet": "^1.2",
