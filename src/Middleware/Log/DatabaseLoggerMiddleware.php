@@ -7,11 +7,11 @@ use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Data\DataRewriterInterface;
 use Pyncer\Data\Mapper\MapperAdaptorInterface;
-use Pyncer\Exception\InvalidArgumentException;
 use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
 use Pyncer\Log\DatabaseLogger;
+use Pyncer\Log\GroupLogger;
 
 class DatabaseLoggerMiddleware implements MiddlewareInterface
 {
@@ -57,15 +57,17 @@ class DatabaseLoggerMiddleware implements MiddlewareInterface
         if ($handler->has(ID::LOGGER)) {
             $existingLogger = $handler->get(ID::LOGGER);
 
-            if ($existingLogger instanceof PsrLoggerInterface) {
+            if ($existingLogger instanceof GroupLogger) {
+                $existingLogger->addLogger($logger);
+            } elseif ($existingLogger instanceof PsrLoggerInterface) {
                 $logger->inherit($existingLogger);
+                $handler->set(ID::LOGGER, $logger);
             } else {
                 throw new UnexpectedValueException('Invalid logger.');
             }
-
+        } else {
+            $handler->set(ID::LOGGER, $logger);
         }
-
-        $handler->set(ID::LOGGER, $logger);
 
         return $handler->next($request, $response);
     }

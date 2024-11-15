@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.5.0 - Unreleased
+
+### Added
+
+- Added LoggerMiddleware to initialize GroupLogger.
+
+### Changed
+
+- Updated DatabaseLoggerMiddleware to support GroupLogger.
+
 ## 1.4.0 - 2024-03-27
 
 ### Added
