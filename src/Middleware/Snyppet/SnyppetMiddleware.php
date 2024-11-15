@@ -74,10 +74,18 @@ class SnyppetMiddleware implements MiddlewareInterface
             $handler->set(ID::SNYPPET, $snyppetManager);
         }
 
+        $middlewares = [];
+
         foreach ($snyppetManager as $snyppet) {
             foreach ($snyppet->getMiddlewares($this->getType()) as $middleware) {
-                $handler->prepend($middleware);
+                $middlewares[] = $middleware;
             }
+        }
+
+        array_reverse($middlewares);
+
+        foreach ($middlewares as $key => $value) {
+            $handler->prepend($value);
         }
 
         return $handler->next($request, $response);

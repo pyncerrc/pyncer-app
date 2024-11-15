@@ -10,6 +10,10 @@
 
 - Updated DatabaseLoggerMiddleware to support GroupLogger.
 
+### Fixed
+
+- Fixed Snyppet middleware executing middlewares in wrong order in some situations.
+
 ## 1.4.0 - 2024-03-27
 
 ### Added
