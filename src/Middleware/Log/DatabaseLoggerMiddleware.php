@@ -5,7 +5,6 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Pyncer\App\Identifier as ID;
-use Pyncer\Data\DataRewriterInterface;
 use Pyncer\Data\Mapper\MapperAdaptorInterface;
 use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Server\MiddlewareInterface;
