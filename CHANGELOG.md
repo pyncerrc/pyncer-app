@@ -6,6 +6,10 @@
 
 - Fixed deprecated implicitly marked nullable parameter.
 
+### Changed
+
+- Updated psr/http-message to 2.0.
+
 ## 1.5.0 - 2024-11-15
 
 ### Added
