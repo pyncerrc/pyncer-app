@@ -118,7 +118,7 @@ class App extends Container implements RequestHandlerInterface
         return parent::set($id, $value);
     }
 
-    public function send(PsrResponseInterface $response = null): void
+    public function send(?PsrResponseInterface $response = null): void
     {
         if ($response === null) {
             $response = $this->run();
