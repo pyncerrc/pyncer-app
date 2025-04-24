@@ -75,7 +75,7 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
         foreach ($value as $key => $path) {
             if (str_starts_with($path, '@')) {
                 $path = explode('/', $path, 2);
-                $path[1] = '/' . trim($path[1] ?? '', '/');
+                $path[1] = trim($path[1] ?? '', '/');
                 $value[$key] = implode('/', $path);
             } else {
                 $value[$key] = '/' . trim($path, '/');
@@ -139,12 +139,12 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
             return true;
         }
 
-        $uri = $request->getUri();
+        $uriPath = '/' . trim($request->getUri()->getPath(), '/');
 
         // Access path
         if ($this->getAccessPath() !== null) {
-            if ($uri->getPath() === $this->getAccessPath() ||
-                str_starts_with($uri->getPath(), $this->getAccessPath() . '/')
+            if ($uriPath === $this->getAccessPath() ||
+                str_starts_with($uriPath, $this->getAccessPath() . '/')
             ) {
                 return true;
             }
@@ -154,27 +154,34 @@ abstract class AbstractBearerAuthenticatorMiddleware extends AbstractAuthenticat
         foreach ($this->getPublicPaths() as $value) {
             $method = null;
             $path = $value;
+            $globPaths = false;
 
             if (str_starts_with($path, '@')) {
                 $path = explode('/', $path, 2);
                 $method = strtoupper(substr($path[0], 1));
-                $path = $path[1] ?? '';
+                $path = '/' . ($path[1] ?? '');
+            }
+
+            if (str_ends_with($path, '/*')) {
+                $path = substr($path, 0, -2);
+                if ($path == '') {
+                    $path = '/';
+                }
+                $globPaths = true;
             }
 
             if ($method !== null && $method !== $request->getMethod()) {
                 continue;
             }
 
-            if ($path === '') {
-                throw new UnexpectedValueException(
-                    'Public path is invalid. (' . $value . ')'
-                );
+            if ($uriPath === $path) {
+                return true;
             }
 
-            if ($uri->getPath() === $path ||
-                str_starts_with($uri->getPath(), $path . '/')
-            ) {
-                return true;
+            if ($globPaths) {
+                if ($path === '/' || str_starts_with($uriPath, $path . '/')) {
+                    return true;
+                }
             }
         }
 
