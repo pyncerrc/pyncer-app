@@ -19,6 +19,7 @@ class LoggerMiddleware implements MiddlewareInterface
         $logger = new GroupLogger();
 
         if ($handler->has(ID::LOGGER)) {
+            /** @var \Psr\Log\LoggerInterface **/
             $existingLogger = $handler->get(ID::LOGGER);
             $logger->addLogger($existingLogger);
         }

@@ -5,7 +5,7 @@
 ### Fixed
 
 - Fixed issues with BearerAuthenticatorMiddleware public paths option.
-- Fixed deprecated implicitly marked nullable parameter.
+- Fixed deprecated implicitly marked nullable parameters.
 
 ### Changed
 

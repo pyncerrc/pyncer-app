@@ -27,7 +27,7 @@ class Identifier
 
     public static function register(string ...$identifiers): void
     {
-        foreach ($identifier as $identifiers) {
+        foreach ($identifiers as $identifier) {
             if (strtolower($identifier) !== $identifier) {
                 throw new LogicException('Invalid identifier name. (' . $identifier . ')');
             }

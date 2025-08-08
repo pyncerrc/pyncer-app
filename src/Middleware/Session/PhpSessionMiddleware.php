@@ -16,7 +16,7 @@ class PhpSessionMiddleware implements MiddlewareInterface
     private ?int $idExpirationInterval;
 
     public function __construct(
-        Cookie $cookie = null,
+        ?Cookie $cookie = null,
         array $options = [],
         ?int $idExpirationInterval = null,
     ) {

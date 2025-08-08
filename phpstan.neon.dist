@@ -1,9 +1,10 @@
 parameters:
-    checkMissingIterableValueType: false
     level: max
     paths:
         - src
     ignoreErrors:
+        -
+            identifier: missingType.iterableValue
         -
             message: "#^Call to an undefined static method Pyncer\\\\App\\\\Identifier::mapperAdaptor\\(\\)\\.$#"
             count: 1
