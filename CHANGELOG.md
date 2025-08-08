@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.5.1 - Unreleased
+## 1.5.1 - 2025-08-08
 
 ### Fixed
 
@@ -9,6 +9,7 @@
 
 ### Changed
 
+- Identifier::register method can now take multiple identifiers.
 - Updated psr/http-message to 2.0.
 
 ## 1.5.0 - 2024-11-15

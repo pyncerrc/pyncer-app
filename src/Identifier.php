@@ -25,14 +25,16 @@ class Identifier
     private function __construct()
     {}
 
-    public static function register(string $identifier): void
+    public static function register(string ...$identifiers): void
     {
-        if (strtolower($identifier) !== $identifier) {
-            throw new LogicException('Invalid identifier name. (' . $identifier . ')');
-        }
+        foreach ($identifier as $identifiers) {
+            if (strtolower($identifier) !== $identifier) {
+                throw new LogicException('Invalid identifier name. (' . $identifier . ')');
+            }
 
-        if (!in_array($identifier, static::$identifiers)) {
-            static::$identifiers[] = $identifier;
+            if (!in_array($identifier, static::$identifiers)) {
+                static::$identifiers[] = $identifier;
+            }
         }
     }
 
