@@ -5,6 +5,7 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface as PsrMiddlewareInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use Pyncer\Initializer;
 use Pyncer\App\Identifier as ID;
 use Pyncer\Container\Container;
 use Pyncer\Exception\UnexpectedValueException;
@@ -18,7 +19,6 @@ use Pyncer\Snyppet\SnyppetManager;
 
 use function header;
 use function implode;
-use function Pyncer\initialize as pyncer_initialize;
 use function sprintf;
 
 class App extends Container implements RequestHandlerInterface
@@ -45,7 +45,7 @@ class App extends Container implements RequestHandlerInterface
 
     protected function initialize(): void
     {
-        pyncer_initialize();
+        Initializer::initialize();
     }
 
     public function count(): int

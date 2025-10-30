@@ -7,18 +7,18 @@ use function Pyncer\Utility\to_snake_case as pyncer_to_snake_case;
 
 class Identifier
 {
-    public const ACCESS = 'access';
-    public const DATABASE = 'database';
-    public const I18N = 'i18n';
-    public const IMAGE = 'image';
-    public const INSTALL = 'install';
-    public const LOGGER = 'logger';
-    public const MAPPER_ADAPTOR = 'mapper_adaptor';
-    public const MIDDLEWARE = 'middleware';
-    public const ROUTER = 'router';
-    public const SESSION = 'session';
-    public const SOURCE_MAP = 'source_map';
-    public const SNYPPET = 'snyppet';
+    public const string ACCESS = 'access';
+    public const string DATABASE = 'database';
+    public const string I18N = 'i18n';
+    public const string IMAGE = 'image';
+    public const string INSTALL = 'install';
+    public const string LOGGER = 'logger';
+    public const string MAPPER_ADAPTOR = 'mapper_adaptor';
+    public const string MIDDLEWARE = 'middleware';
+    public const string ROUTER = 'router';
+    public const string SESSION = 'session';
+    public const string SOURCE_MAP = 'source_map';
+    public const string SNYPPET = 'snyppet';
 
     protected static array $identifiers = [];
 
