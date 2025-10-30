@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.5.2 - 2025-10-30
+
+### Changed
+
+- Updated App to use new Pyncer\\Initializer class.
+
 ## 1.5.1 - 2025-08-08
 
 ### Fixed
