@@ -18,13 +18,16 @@ class DebugMiddleware implements MiddlewareInterface
 {
     private bool $enabled;
     private bool $errorResponse;
+    private int $errorLevel;
 
     public function __construct(
         bool $enabled = false,
         bool $errorResponse = false,
+        int $errorLevel = E_ALL,
     ) {
         $this->setEnabled($enabled);
         $this->setErrorResponse($errorResponse);
+        $this->setErrorLevel($errorLevel);
     }
 
     public function getEnabled(): bool
@@ -47,6 +50,16 @@ class DebugMiddleware implements MiddlewareInterface
         return $this;
     }
 
+    public function getErrorLevel(): int
+    {
+        return $this->errorLevel;
+    }
+    public function setErrorLevel(int $value): static
+    {
+        $this->errorLevel = $value;
+        return $this;
+    }
+
     public function __invoke(
         PsrServerRequestInterface $request,
         PsrResponseInterface $response,
@@ -55,7 +68,7 @@ class DebugMiddleware implements MiddlewareInterface
     {
         if ($this->getEnabled()) {
             // Log and show all errors
-            error_reporting(E_ALL);
+            error_reporting($this->getErrorLevel());
             ini_set("log_errors", 1);
             ini_set("display_errors", 1);
             ini_set('display_startup_errors', 1);
@@ -81,7 +94,7 @@ class DebugMiddleware implements MiddlewareInterface
             }
         } else {
             // We still want errors to be reported to the log file
-            error_reporting(E_ALL);
+            error_reporting($this->getErrorLevel());
             ini_set("log_errors", 1);
             // Hide errors from output
             ini_set("display_errors", 0);

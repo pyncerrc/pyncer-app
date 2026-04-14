@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.5.3 - 2026-04-14
+
+### Added
+
+- DebugMiddleware now has an error level parameter to set a custom error level.
+
 ## 1.5.2 - 2025-10-30
 
 ### Changed
