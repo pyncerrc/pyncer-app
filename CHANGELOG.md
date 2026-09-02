@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.5.4 - 2026-09-01
+
+### Fixed
+
+- Fixed issue where authenticators could deny access to public paths if bad credentials provided.
+
 ## 1.5.3 - 2026-04-14
 
 ### Added

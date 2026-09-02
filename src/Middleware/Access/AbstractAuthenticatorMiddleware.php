@@ -102,9 +102,9 @@ abstract class AbstractAuthenticatorMiddleware implements
 
         $accessResponse = $access->getResponse($handler);
 
-        if ($accessResponse === null &&
-            !$this->isAuthorized($request, $access)
-        ) {
+        if ($this->isAuthorized($request, $access)) {
+            $accessResponse = null;
+        } else if ($accessResponse === null) {
             $accessResponse = $access->getChallengeResponse(
                 Status::CLIENT_ERROR_401_UNAUTHORIZED,
                 [
